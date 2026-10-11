@@ -151,9 +151,7 @@ class Canvas:
     def __init__(self, cols, rows):
         self.cols, self.rows = cols, rows
         self.w, self.h = cols * 2, rows * 4      # size in dots
-        self.ptsgreen = [[0] * cols for _ in range(rows)]    # lidar points (green)
-        self.ptsyellow = [[0] * cols for _ in range(rows)]
-        self.ptsred = [[0] * cols for _ in range(rows)];
+        self.pts = [[0] * cols for _ in range(rows)]    # lidar points (green)
         self.grid = [[0] * cols for _ in range(rows)]   # rings and markers (grey)
 
     def plot(self, layer, x, y):
@@ -166,13 +164,9 @@ class Canvas:
         for r in range(self.rows):
             out, cur = [], None
             for c in range(self.cols):
-                pgreen, pyellow, pred, g = self.ptsgreen[r][c], self.ptsyellow[r][c], self.ptsred[r][c], self.grid[r][c]
-                if pgreen:
-                    col, ch = "\x1b[92m", chr(0x2800 | pgreen | g)
-                elif pyellow:
-                    col, ch = "\x1b[93m", chr(0x2800 | pyellow | g)
-                elif pred:
-                    col, ch = "\x1b[91m", chr(0x2800 | pred | g)
+                p, g = self.pts[r][c], self.grid[r][c]
+                if p:
+                    col, ch = "\x1b[92m", chr(0x2800 | p | g)
                 elif g:
                     col, ch = "\x1b[90m", chr(0x2800 | g)
                 else:
@@ -228,15 +222,8 @@ def build_frame(scan, args, cols, rows, pps):
         r = R * m / args.range
         a = math.radians(b) + rot
         x, y = cx + r * math.sin(a), cy - r * math.cos(a)
-        if r > 64:
-            cv.plot(cv.ptsgreen, x, y)
-            cv.plot(cv.ptsgreen, x + 1, y)
-        if r > 32:
-            cv.plot(cv.ptsyellow, x, y)
-            cv.plot(cv.ptsyellow, x + 1, y)
-        else:
-            cv.plot(cv.ptsred, x, y)
-            cv.plot(cv.ptsred, x + 1, y)
+        cv.plot(cv.pts, x, y)
+        cv.plot(cv.pts, x + 1, y)
         count += 1
 
     head = (f"LD06 | edge {args.range:g} m | rings {ring_step(args.range):g} m | "
