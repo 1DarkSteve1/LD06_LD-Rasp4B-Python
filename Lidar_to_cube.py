@@ -28,7 +28,7 @@ os.environ["MAVLINK20"] = "1"   # MAVLink 2 is required for OBSTACLE_DISTANCE
 import serial
 from pymavlink import mavutil
 
-import lidar_view as lv      # reuses Scan, reader_loop (packet reading + CRC) and demo_loop
+import Lidar_view as lv      # reuses Scan, reader_loop (packet reading + CRC) and demo_loop
 
 mav = mavutil.mavlink
 UNKNOWN = 65535              # MAVLink: "no information for this sector"
